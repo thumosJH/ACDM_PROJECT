@@ -33,7 +33,7 @@ bool CFeatures_2D::init_DetectorDescriptorMatcher()
 bool CFeatures_2D::init_DetectorDescriptorMatcherTracker()
 {
 	this->Descriptor_tracker = DescriptorExtractor::create("ORB");
-	this->Matcher_tracker = DescriptorMatcher::create("BruteForce-HammingLUT");
+	this->Matcher_tracker = DescriptorMatcher::create("BruteForce-SL2");	//
 
 	this->Detector_tracker = new OrbFeatureDetector();
 
@@ -325,7 +325,7 @@ bool CFeatures_2D::track_Object(Mat queryImage)
 	vector<KeyPoint> queryKeypoints;
 	Mat queryDescriptors;
 	vector<DMatch> matches;
-
+	waitKey(10);
 	this->Detector_tracker->detect(queryImage, queryKeypoints);
 	this->Descriptor_tracker->compute(queryImage, queryKeypoints, queryDescriptors);
 	queryDescriptors.convertTo(queryDescriptors, CV_32F);
@@ -334,7 +334,9 @@ bool CFeatures_2D::track_Object(Mat queryImage)
 	cout << "tracked Index = " << this->databaseRecognisedIndx<<endl;
 	this->trackedDescriptors = this->databaseDescriptors[this->databaseRecognisedIndx];
 	imshow("computed Image by Matcher", this->imageDatabase[this->databaseRecognisedIndx]);
+
 	this->Matcher_tracker->match(queryDescriptors, this->trackedDescriptors, matches);
+	
 	cout << "HERE7~!\n";
 	if (queryDescriptors.type() == this->trackedDescriptors.type())
 		this->Matcher_tracker->match(queryDescriptors, this->trackedDescriptors, matches);
